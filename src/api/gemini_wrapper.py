@@ -18,7 +18,7 @@ class GeminiWrapper:
     
     def __init__(
         self,
-        api_key: Optional[str] = "AIzaSyAJin8zYLvaEBxjWwGWXzV5_2NDH9CcNH0",
+        api_key: Optional[str] = "",
         model_name: str = "gemini-2.5-flash",
         rate_limit: int = 10,
         rate_window: int = 60
@@ -27,7 +27,7 @@ class GeminiWrapper:
         self.api_key = api_key if api_key is not None else os.getenv("GEMINI_API_KEY")
         # If still None, use the default value from parameter
         if not self.api_key:
-            self.api_key = "AIzaSyAVrHXmYItE-j1Ux9kA1l2WoQUp4a5b_iI"
+            self.api_key = ""
         
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel(model_name=model_name)
