@@ -1,0 +1,52 @@
+kernel:
+  safety_policy:
+    # Only operations that are completely safe will execute
+    strict_mode: true
+  
+  execution_history:
+    # Simplified logging for multi-step attack detection
+    window_size: 50  # Number of operations to keep in history
+    enable_pattern_detection: true
+  
+  protected_resources:
+    files:
+      - "/etc/passwd"
+      - "*.config"
+      - "*.env"
+    directories:
+      - "/system"
+      - "/protected"
+      - "/etc"
+    patterns:
+      - "**/node_modules/**"
+      - "**/.git/**"
+  
+  attack_patterns:
+    # Patterns that trigger human intervention
+    reconnaissance_exploitation:
+      - pattern: ["read_protected", "list_protected", "modify_protected"]
+        threshold: 0.8
+    escalation_chain:
+      - pattern: ["safe_op", "safe_op", "unsafe_op"]
+        threshold: 0.7
+    info_gathering_attack:
+      - pattern: ["list", "read", "delete"]
+        threshold: 0.75
+  
+  refusal_templates:
+    not_safe: "I cannot execute {operation} because {reason}. Instead, {alternative}."
+  
+  human_intervention:
+    # Operations requiring human approval
+    require_approval_for:
+      - "delete_system_files"
+      - "modify_protected_resources"
+      - "multi_step_attack_detected"
+      - "permission_escalation"
+    interface: "cli"  # cli, api, ui
+  
+  sandbox:
+    workspace_path: "./sandbox/workspace"
+    protected_path: "./sandbox/protected"
+    logs_path: "./sandbox/logs"
+    isolation_level: "virtual"  # virtual, chroot, container
